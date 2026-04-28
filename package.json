@@ -1,0 +1,32 @@
+{
+  "name": "portfolio",
+  "version": "0.1.0",
+  "description": "Senior fullstack software engineer portfolio monorepo.",
+  "private": true,
+  "license": "UNLICENSED",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "api:build": "npm run build --workspace @portfolio/api",
+    "api:dev": "npm run start:dev --workspace @portfolio/api",
+    "api:lint": "npm run lint --workspace @portfolio/api",
+    "api:test": "npm run test --workspace @portfolio/api",
+    "build": "npm run build --workspaces --if-present",
+    "db:generate": "npm run generate --workspace @portfolio/database",
+    "db:migrate": "npm run migrate:dev --workspace @portfolio/database",
+    "db:studio": "npm run studio --workspace @portfolio/database",
+    "dev": "npm run dev --workspaces --if-present",
+    "format": "prettier --write .",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "web:build": "npm run build --workspace @portfolio/web",
+    "web:dev": "npm run dev --workspace @portfolio/web",
+    "web:lint": "npm run lint --workspace @portfolio/web"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}

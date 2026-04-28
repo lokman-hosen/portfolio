@@ -1,0 +1,159 @@
+// apps/api/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== USER & AUTH MODULE ====================
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String    // Hashed password
+  name          String?
+  role          UserRole  @default(USER)
+  avatar        String?
+  bio           String?
+
+  // Relations
+  sessions      Session[]
+  messages      Message[]
+  activities    ActivityLog[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Session {
+  id            String    @id @default(cuid())
+  token         String    @unique
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// ==================== PROJECTS MODULE ====================
+model Project {
+  id            String      @id @default(cuid())
+  title         String
+  slug          String      @unique
+  description   String      @db.Text
+  content       String?     @db.Text
+  image         String?
+  images        String[]    // Gallery images
+  technologies  String[]
+
+  // Links
+  githubUrl     String?
+  liveUrl       String?
+  caseStudyUrl  String?
+
+  // Metadata
+  featured      Boolean     @default(false)
+  order         Int         @default(0)
+  startDate     DateTime?
+  endDate       DateTime?
+  status        ProjectStatus @default(COMPLETED)
+
+  // Relations
+  testimonials  Testimonial[]
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([featured])
+  @@index([slug])
+}
+
+model Testimonial {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  authorName    String
+  authorTitle   String?
+  authorAvatar  String?
+  content       String    @db.Text
+  rating        Int?
+
+  createdAt     DateTime  @default(now())
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+// ==================== SKILLS MODULE ====================
+model Skill {
+  id            String      @id @default(cuid())
+  name          String
+  category      SkillCategory
+  proficiency   Int         @default(3) // 1-5 scale
+  icon          String?
+  yearsOfExperience Float?
+  order         Int         @default(0)
+  featured      Boolean     @default(false)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([name, category])
+}
+
+enum SkillCategory {
+  FRONTEND
+  BACKEND
+  DATABASE
+  DEVOPS
+  TOOLS
+  SOFT_SKILL
+}
+
+// ==================== CONTACT MODULE ====================
+model Message {
+  id            String    @id @default(cuid())
+  name          String
+  email         String
+  subject       String?
+  message       String    @db.Text
+  read          Boolean   @default(false)
+  replied       Boolean   @default(false)
+
+  userId        String?   // If logged in user
+  user          User?     @relation(fields: [userId], references: [id])
+
+  ipAddress     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([read])
+  @@index([createdAt])
+}
+
+// ==================== ACTIVITY LOG MODULE ====================
+model ActivityLog {
+  id            String    @id @default(cuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+  action        String
+  entity        String?
+  entityId      String?
+  metadata      Json?
+  ipAddress     String?
+
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
