@@ -17,7 +17,7 @@ packages/
 ## Setup
 
 ```bash
-npm install
+cd api then run: npm install
 cp .env.example .env
 ```
 
