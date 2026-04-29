@@ -10,7 +10,6 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: createUserDto.email },
     });
@@ -19,10 +18,8 @@ export class UserService {
       throw new ConflictException('User with this email already exists');
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    // Create user
     const user = await this.prisma.user.create({
       data: {
         email: createUserDto.email,
@@ -62,9 +59,9 @@ export class UserService {
     });
   }
 
-  async findOne(id: number) {  // Changed from string to number
+  async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id },  // Now id is number, matches Prisma schema
+      where: { id },
       select: {
         id: true,
         email: true,
@@ -90,18 +87,15 @@ export class UserService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {  // Changed from string to number
-    // Check if user exists
+  async update(id: number, updateUserDto: UpdateUserDto) {
     await this.findOne(id);
 
-    // If password is being updated, hash it
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    // Update user
     const updatedUser = await this.prisma.user.update({
-      where: { id },  // Now id is number
+      where: { id },
       data: updateUserDto,
       select: {
         id: true,
@@ -118,13 +112,11 @@ export class UserService {
     return updatedUser;
   }
 
-  async remove(id: number) {  // Changed from string to number
-    // Check if user exists
+  async remove(id: number) {
     await this.findOne(id);
 
-    // Delete user
     await this.prisma.user.delete({
-      where: { id },  // Now id is number, no more type error!
+      where: { id },
     });
 
     return { message: 'User deleted successfully' };

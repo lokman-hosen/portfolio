@@ -1,5 +1,7 @@
 1. Run Project: npm run start:dev
 2. Generate Migration: npx prisma generate
+  If migration fails, reset the database
+  npx prisma migrate reset --force
 3. With migration history: npx prisma migrate dev --name update_schema
 4. Run seed: npx prisma db seed
 npx prisma db seed
