@@ -52,21 +52,10 @@ export class UserService {
   }
 
   async findAll() {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        avatar: true,
-        bio: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    return this.prisma.user.findMany();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -94,7 +83,7 @@ export class UserService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     // Check if user exists
     await this.findOne(id);
 
@@ -122,7 +111,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     // Check if user exists
     await this.findOne(id);
 

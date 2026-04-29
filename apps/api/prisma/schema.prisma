@@ -29,7 +29,7 @@ model User {
 model Session {
   id            Int    @id @default(autoincrement())
   token         String    @unique
-  userId        String
+  userId        Int
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt     DateTime
   createdAt     DateTime  @default(now())
@@ -75,7 +75,7 @@ model Project {
 
 model Testimonial {
   id            Int    @id @default(autoincrement())
-  projectId     String
+  projectId     Int
   project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   authorName    String
   authorTitle   String?
@@ -129,7 +129,7 @@ model Message {
   read          Boolean   @default(false)
   replied       Boolean   @default(false)
 
-  userId        String?   // If logged in user
+  userId        Int?   // If logged in user
   user          User?     @relation(fields: [userId], references: [id])
 
   ipAddress     String?
@@ -143,11 +143,11 @@ model Message {
 // ==================== ACTIVITY LOG MODULE ====================
 model ActivityLog {
   id            Int    @id @default(autoincrement())
-  userId        String?
+  userId        Int?
   user          User?     @relation(fields: [userId], references: [id])
   action        String
   entity        String?
-  entityId      String?
+  entityId      Int?
   metadata      Json?
   ipAddress     String?
 
