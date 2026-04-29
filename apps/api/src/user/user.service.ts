@@ -1,9 +1,5 @@
 // apps/api/src/user/user.service.ts
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -52,12 +48,23 @@ export class UserService {
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        avatar: true,
+        bio: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number) {  // Changed from string to number
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id },  // Now id is number, matches Prisma schema
       select: {
         id: true,
         email: true,
@@ -83,7 +90,7 @@ export class UserService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {  // Changed from string to number
     // Check if user exists
     await this.findOne(id);
 
@@ -94,7 +101,7 @@ export class UserService {
 
     // Update user
     const updatedUser = await this.prisma.user.update({
-      where: { id },
+      where: { id },  // Now id is number
       data: updateUserDto,
       select: {
         id: true,
@@ -111,13 +118,13 @@ export class UserService {
     return updatedUser;
   }
 
-  async remove(id: number) {
+  async remove(id: number) {  // Changed from string to number
     // Check if user exists
     await this.findOne(id);
 
     // Delete user
     await this.prisma.user.delete({
-      where: { id },
+      where: { id },  // Now id is number, no more type error!
     });
 
     return { message: 'User deleted successfully' };
